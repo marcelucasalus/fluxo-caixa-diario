@@ -1,6 +1,11 @@
 <Solution>
-  <Folder Name="/Application/" />
-  <Folder Name="/Domain/" />
+  <Folder Name="/Application/">
+    <Project Path="Command/Command.csproj" Id="d06747dc-1365-4aee-bb41-b4d951247624" />
+    <Project Path="Contract/Contract.csproj" Id="77208f96-a0d1-4bc9-9213-68a6bf63196b" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="Enumeration/Enumeration.csproj" Id="67bc6daa-cf23-4191-96b6-5657c4811327" />
+  </Folder>
   <Folder Name="/Infrastructure/" />
   <Folder Name="/Infrastructure/Database/" />
   <Folder Name="/Infrastructure/Integration/" />

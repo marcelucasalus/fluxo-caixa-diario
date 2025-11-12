@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\marce\\OneDrive\\Documentos\\api\\FluxoCaixaApi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C0154E35-90DB-4CDB-8CE4-18A56F804F82}|FluxoCaixaApi\\FluxoCaixaApi.csproj|c:\\users\\marce\\onedrive\\documentos\\api\\fluxocaixaapi\\fluxocaixaapi\\controllers\\fluxocaixacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C0154E35-90DB-4CDB-8CE4-18A56F804F82}|FluxoCaixaApi\\FluxoCaixaApi.csproj|solutionrelative:fluxocaixaapi\\controllers\\fluxocaixacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{59030625-FDB4-8ABD-7D73-6AC969EEB0C7}|FluxoCaixaApi\\FluxoCaixaApi.csproj|c:\\users\\marce\\onedrive\\documentos\\api\\fluxocaixaapi\\fluxocaixaapi\\controllers\\lancamentoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{59030625-FDB4-8ABD-7D73-6AC969EEB0C7}|FluxoCaixaApi\\FluxoCaixaApi.csproj|solutionrelative:fluxocaixaapi\\controllers\\lancamentoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -19,14 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "FluxoCaixaController.cs",
-              "DocumentMoniker": "C:\\Users\\marce\\OneDrive\\Documentos\\api\\FluxoCaixaApi\\FluxoCaixaApi\\Controllers\\FluxoCaixaController.cs",
-              "RelativeDocumentMoniker": "FluxoCaixaApi\\Controllers\\FluxoCaixaController.cs",
-              "ToolTip": "C:\\Users\\marce\\OneDrive\\Documentos\\api\\FluxoCaixaApi\\FluxoCaixaApi\\Controllers\\FluxoCaixaController.cs",
-              "RelativeToolTip": "FluxoCaixaApi\\Controllers\\FluxoCaixaController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAABJAAAAAAAAAA==",
+              "Title": "LancamentosController.cs",
+              "DocumentMoniker": "C:\\Users\\marce\\OneDrive\\Documentos\\api\\FluxoCaixaApi\\FluxoCaixaApi\\Controllers\\LancamentosController.cs",
+              "RelativeDocumentMoniker": "FluxoCaixaApi\\Controllers\\LancamentosController.cs",
+              "ToolTip": "C:\\Users\\marce\\OneDrive\\Documentos\\api\\FluxoCaixaApi\\FluxoCaixaApi\\Controllers\\LancamentosController.cs",
+              "RelativeToolTip": "FluxoCaixaApi\\Controllers\\LancamentosController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-12T00:09:24.947Z",
+              "WhenOpened": "2025-11-12T02:58:31.683Z",
               "EditorCaption": ""
             }
           ]

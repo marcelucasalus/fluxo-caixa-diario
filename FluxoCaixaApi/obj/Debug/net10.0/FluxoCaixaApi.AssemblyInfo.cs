@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FluxoCaixaApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+834c867233f439bf48b785be013daa6a34e90ee8")]
 [assembly: System.Reflection.AssemblyProductAttribute("FluxoCaixaApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FluxoCaixaApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -6,10 +6,6 @@ C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\FluxoCaixaApi.runtimeconfig.json
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\FluxoCaixaApi.dll
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\FluxoCaixaApi.pdb
-C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Asp.Versioning.Abstractions.dll
-C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Asp.Versioning.Http.dll
-C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Asp.Versioning.Mvc.dll
-C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Asp.Versioning.Mvc.ApiExplorer.dll
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Microsoft.OpenApi.dll
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\obj\Debug\net10.0\FluxoCaixaApi.csproj.AssemblyReference.cache
@@ -36,3 +32,9 @@ C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\obj\Debug\net
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\obj\Debug\net10.0\FluxoCaixaApi.pdb
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\obj\Debug\net10.0\FluxoCaixaApi.genruntimeconfig.cache
 C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\obj\Debug\net10.0\ref\FluxoCaixaApi.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\obj\Debug\net10.0\FluxoCaixaApi.sourcelink.json
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Microsoft.AspNetCore.Mvc.Versioning.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixaApi\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
