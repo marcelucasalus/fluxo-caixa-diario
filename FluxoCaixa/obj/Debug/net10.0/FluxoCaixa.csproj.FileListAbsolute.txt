@@ -1,0 +1,13 @@
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\bin\Debug\net10.0\FluxoCaixa.deps.json
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\bin\Debug\net10.0\FluxoCaixa.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\bin\Debug\net10.0\FluxoCaixa.pdb
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\FluxoCaixa.csproj.AssemblyReference.cache
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\FluxoCaixa.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\FluxoCaixa.AssemblyInfoInputs.cache
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\FluxoCaixa.AssemblyInfo.cs
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\FluxoCaixa.csproj.CoreCompileInputs.cache
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\FluxoCaixa.sourcelink.json
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\FluxoCaixa.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\refint\FluxoCaixa.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\FluxoCaixa.pdb
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\FluxoCaixa\obj\Debug\net10.0\ref\FluxoCaixa.dll

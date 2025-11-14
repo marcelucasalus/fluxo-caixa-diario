@@ -1,0 +1,13 @@
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\bin\Debug\net10.0\Enumeration.deps.json
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\bin\Debug\net10.0\Enumeration.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\bin\Debug\net10.0\Enumeration.pdb
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\Enumeration.csproj.AssemblyReference.cache
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\Enumeration.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\Enumeration.AssemblyInfoInputs.cache
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\Enumeration.AssemblyInfo.cs
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\Enumeration.csproj.CoreCompileInputs.cache
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\Enumeration.sourcelink.json
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\Enumeration.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\refint\Enumeration.dll
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\Enumeration.pdb
+C:\Users\marce\OneDrive\Documentos\api\FluxoCaixaApi\Enumeration\obj\Debug\net10.0\ref\Enumeration.dll

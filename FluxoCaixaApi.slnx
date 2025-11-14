@@ -2,13 +2,21 @@
   <Folder Name="/Application/">
     <Project Path="Command/Command.csproj" Id="d06747dc-1365-4aee-bb41-b4d951247624" />
     <Project Path="Contract/Contract.csproj" Id="77208f96-a0d1-4bc9-9213-68a6bf63196b" />
+    <Project Path="Query/Query.csproj" Id="2aef06d6-fee3-41a3-acf9-abf2f5f339c6" />
   </Folder>
   <Folder Name="/Domain/">
     <Project Path="Enumeration/Enumeration.csproj" Id="67bc6daa-cf23-4191-96b6-5657c4811327" />
+    <Project Path="FluxoCaixa/FluxoCaixa.csproj" Id="615024e9-f543-4310-8385-5df739185d39" />
   </Folder>
   <Folder Name="/Infrastructure/" />
-  <Folder Name="/Infrastructure/Database/" />
-  <Folder Name="/Infrastructure/Integration/" />
+  <Folder Name="/Infrastructure/Database/">
+    <Project Path="CommandStore/CommandStore.csproj" Id="721932ad-146d-4173-a9e7-9ac41b1ff90b" />
+    <Project Path="QueryStore/QueryStore.csproj" Id="02f5cb7f-1001-41d5-9412-b6a43d3c75e8" />
+    <Project Path="Store/Store.csproj" Id="dcc21157-a709-4ed1-8979-7566a8aeeea9" />
+  </Folder>
+  <Folder Name="/Infrastructure/Integration/">
+    <Project Path="Integration/Integration.csproj" Id="7a8610d2-d31a-49c0-ab31-899049f21848" />
+  </Folder>
   <Folder Name="/Infrastructure/Web/">
     <Project Path="FluxoCaixaApi/FluxoCaixaApi.csproj" />
   </Folder>

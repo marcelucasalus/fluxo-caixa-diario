@@ -8,10 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="13.1.0" />
+    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.9.32" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Enumeration\Enumeration.csproj" />
+    <ProjectReference Include="..\FluxoCaixa\FluxoCaixa.csproj" />
   </ItemGroup>
 
 </Project>
