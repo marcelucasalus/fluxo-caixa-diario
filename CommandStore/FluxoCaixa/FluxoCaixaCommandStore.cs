@@ -1,6 +1,7 @@
 ﻿using FluxoCaixa.LancamentoRegistrar.Entity;
 using FluxoCaixa.LancamentoRegistrar.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
 namespace CommandStore.FluxoCaixa
@@ -10,12 +11,14 @@ namespace CommandStore.FluxoCaixa
         private readonly FluxoCaixaContext _context;
         private readonly IConnectionMultiplexer _redis;
         private readonly RabbitMqPublisher _rabbitPublisher;
+        private readonly ILogger<FluxoCaixaCommandStore> _logger;
 
-        public FluxoCaixaCommandStore(FluxoCaixaContext context, IConnectionMultiplexer redis, RabbitMqPublisher rabbitPublisher)
+        public FluxoCaixaCommandStore(FluxoCaixaContext context, IConnectionMultiplexer redis, RabbitMqPublisher rabbitPublisher, ILogger<FluxoCaixaCommandStore> logger)
         {
             _context = context;
             _redis = redis;
             _rabbitPublisher = rabbitPublisher;
+            _logger = logger;
         }
 
         public async Task<int> RegistrarLancamentos(Lancamento lancamento)
@@ -28,12 +31,14 @@ namespace CommandStore.FluxoCaixa
 
                 if (consolidado == null)
                 {
+                    _logger.LogInformation("Cadastrando consolidado.");
                     consolidado = new ConsolidadoDiario
                     {
                         DataConsolidacao = lancamento.DataLancamento.Date,
                         TotalCreditos = 0,
                         TotalDebitos = 0
                     };
+                    _logger.LogInformation("Validando registro de lancamento.");
                     await _context.ConsolidadosDiarios.AddAsync(consolidado);
                     return await ValidaLancamento(lancamento, consolidado, db);
                 }
@@ -42,8 +47,7 @@ namespace CommandStore.FluxoCaixa
             }
             catch (Exception ex)
             {
-                // Log ou tratamento em caso de falha
-                //_logger.LogError($"Erro ao registrar lançamento: {ex.Message}");
+                _logger.LogError($"Erro ao registrar lançamento: {ex.Message}");
                 throw;
             }
         }
@@ -57,12 +61,15 @@ namespace CommandStore.FluxoCaixa
             // Se o consolidado não existe e o serviço está indisponível, marca como pendente
             if (!await ServiceConsolidadoDisponivel())
             {
+                _logger.LogInformation("Servico fora do ar, publicando na fila.");
                 lancamento.Status = "Pendente";  // Marca como pendente
                 await _context.SaveChangesAsync();                                      
                 _rabbitPublisher.PublishLancamento(lancamento);
+                _logger.LogInformation("Publicado na fila.");
             }
             else
             {
+                _logger.LogInformation("Lancamento consolidado");
                 if (lancamento.Tipo == 'C')
                 {
                     consolidado.TotalCreditos += lancamento.Valor;

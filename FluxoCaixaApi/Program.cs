@@ -13,9 +13,9 @@ using Query.ConsolidadoDiario;
 using QueryStore;
 using QueryStore.Interface;
 using RabbitMQ.Client;
+using Serilog;
 using StackExchange.Redis;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,6 +106,18 @@ builder.Services.AddTransient<IFluxoCaixaCommandStore, FluxoCaixaCommandStore>()
 builder.Services.AddTransient<ILancamentoRegistrarService, LancamentoRegistrarService>();
 builder.Services.AddTransient<IConsolidadoQueryStore, ConsolidadoQueryStore>();
 builder.Services.AddTransient<ILancamentoQueryStore, LancamentoQueryStore>();
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console() // logs no container
+    .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri("http://host.docker.internal:9200"))
+    {
+        AutoRegisterTemplate = true,
+        IndexFormat = "fluxocaixa-logs-{0:yyyy.MM.dd}"
+    })
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

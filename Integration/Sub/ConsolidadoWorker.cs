@@ -3,6 +3,7 @@ using FluxoCaixa.LancamentoRegistrar.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using StackExchange.Redis;
@@ -15,11 +16,13 @@ namespace Integration.Sub
     {
         private readonly IConnection _rabbitConnection;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly ILogger<ConsolidadoWorker> _logger;
 
-        public ConsolidadoWorker(IConnection rabbitConnection, IServiceScopeFactory scopeFactory)
+        public ConsolidadoWorker(IConnection rabbitConnection, IServiceScopeFactory scopeFactory, ILogger<ConsolidadoWorker> logger)
         {
             _rabbitConnection = rabbitConnection;
             _scopeFactory = scopeFactory;
+            _logger = logger;
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -45,7 +48,8 @@ namespace Integration.Sub
                     channel.BasicNack(ea.DeliveryTag, false, true);
                     return;
                 }
-                
+                _logger.LogInformation("Servico disponivel.");
+
                 var consolidado = await context.ConsolidadosDiarios
                     .FirstOrDefaultAsync(c => c.DataConsolidacao.Date == lancamento.DataConsolidacao.Date);
 
@@ -56,6 +60,8 @@ namespace Integration.Sub
                 }
                 var lancamentoEntity = await context.Lancamentos.Where(l => l.IdLancamento == lancamento.IdLancamento).FirstOrDefaultAsync();
 
+                _logger.LogInformation("Processando lancamentos e atualziando consolidado.");
+
                 lancamentoEntity!.Status = "Consolidado";
                 if (lancamento.Tipo == 'C')
                     consolidado.TotalCreditos += lancamento.Valor;
@@ -63,7 +69,7 @@ namespace Integration.Sub
                     consolidado.TotalDebitos += lancamento.Valor;
 
                 await context.SaveChangesAsync();
-
+                _logger.LogInformation("Invalidando cache.");
                 string key = "consolidado:" + consolidado.DataConsolidacao.ToString("yyyy-MM-dd");
                 await redis.KeyDeleteAsync(key);
                 await redis.KeyDeleteAsync("lancamento:" + lancamento.DataLancamento.ToString("yyyy-MM-dd"));
@@ -82,6 +88,7 @@ namespace Integration.Sub
         {
             try
             {
+                _logger.LogInformation("Verificando servico de consolidado.");
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromSeconds(30);
 
