@@ -144,11 +144,11 @@ cd fluxocaixa
 ```mermaid
 flowchart TD
     %% Ator
-    A[Client/API]:::client --> B[Auth Controller: /register e /login]:::auth
+    A[Client/API] --> B[Auth Controller: /register e /login]
 
     %% Autenticação
-    B --> C[Token JWT]:::auth
-    C --> D[Perfis de Usuário: Admin / Consulta]:::auth
+    B --> C[Token JWT]
+    C --> D[Perfis de Usuário: Admin / Consulta]
 
     %% Endpoints
     D --> E[GET Lancamentos]:::endpoint
@@ -175,8 +175,5 @@ flowchart TD
     Q --> R[Worker Background HealthCheck]:::worker
     R --> S[Atualiza Consolidado no SQL]:::db
 
-    %% Classes de estilo
-    classDef client fill:#f9f,stroke:#333,stroke-width:1px
-    classDef auth fill:#bbf,stroke:#333,stroke-width:1px
-    cl
+   
 ```
