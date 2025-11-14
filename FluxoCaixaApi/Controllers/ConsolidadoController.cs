@@ -1,5 +1,6 @@
 ﻿using Contract.Query;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FluxoCaixaApi.Controllers
@@ -18,6 +19,7 @@ namespace FluxoCaixaApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ConsultaOnly")]
         public async Task<IActionResult> ConsolidadoDiario([FromQuery] DateTime? request)
         {
             try

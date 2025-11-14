@@ -1,6 +1,0 @@
-services:
-  fluxocaixaapi:
-    image: ${DOCKER_REGISTRY-}fluxocaixaapi
-    build:
-      context: .
-      dockerfile: FluxoCaixaApi/Dockerfile

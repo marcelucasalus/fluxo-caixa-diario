@@ -3,6 +3,7 @@ using FluxoCaixa.LancamentoRegistrar.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
+using System.Net.Http;
 
 namespace CommandStore.FluxoCaixa
 {
@@ -10,15 +11,17 @@ namespace CommandStore.FluxoCaixa
     {
         private readonly FluxoCaixaContext _context;
         private readonly IConnectionMultiplexer _redis;
-        private readonly RabbitMqPublisher _rabbitPublisher;
+        private readonly IRabbitMqPublisher _rabbitPublisher;
         private readonly ILogger<FluxoCaixaCommandStore> _logger;
+        private readonly HttpClient _httpClient;
 
-        public FluxoCaixaCommandStore(FluxoCaixaContext context, IConnectionMultiplexer redis, RabbitMqPublisher rabbitPublisher, ILogger<FluxoCaixaCommandStore> logger)
+        public FluxoCaixaCommandStore(FluxoCaixaContext context, IConnectionMultiplexer redis, IRabbitMqPublisher rabbitPublisher, ILogger<FluxoCaixaCommandStore> logger, HttpClient httpClient)
         {
             _context = context;
             _redis = redis;
             _rabbitPublisher = rabbitPublisher;
             _logger = logger;
+            _httpClient = httpClient;
         }
 
         public async Task<int> RegistrarLancamentos(Lancamento lancamento)
@@ -85,15 +88,13 @@ namespace CommandStore.FluxoCaixa
             
             return lancamento.IdLancamento;
         }
+
         private async Task<bool> ServiceConsolidadoDisponivel()
         {
             try
             {
-                using var client = new HttpClient();
-                client.Timeout = TimeSpan.FromSeconds(30);
-
-                // Use o hostname do container do serviço de consolidado
-                var response = await client.GetAsync("http://localhost:8080/health");
+                _httpClient.Timeout = TimeSpan.FromSeconds(30);
+                var response = await _httpClient.GetAsync("http://localhost:8080/health");
                 return response.IsSuccessStatusCode;
             }
             catch(Exception e)
@@ -102,7 +103,5 @@ namespace CommandStore.FluxoCaixa
                 return false;
             }
         }
-
     }
-
 }

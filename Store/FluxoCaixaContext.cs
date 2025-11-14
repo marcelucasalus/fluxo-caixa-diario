@@ -1,9 +1,11 @@
 ﻿using FluxoCaixa.LancamentoRegistrar.Entity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Store.Identity;
 
 namespace CommandStore.FluxoCaixa
 {
-    public class FluxoCaixaContext : DbContext
+    public class FluxoCaixaContext : IdentityDbContext<ApplicationUser>
     {
         public FluxoCaixaContext(DbContextOptions<FluxoCaixaContext> options)
             : base(options)
@@ -15,6 +17,8 @@ namespace CommandStore.FluxoCaixa
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             // ======= ENTIDADE ConsolidadoDiario =======
             modelBuilder.Entity<ConsolidadoDiario>(entity =>
             {

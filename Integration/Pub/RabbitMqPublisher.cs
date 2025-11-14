@@ -4,14 +4,15 @@ using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 
-public class RabbitMqPublisher
+public class RabbitMqPublisher : IRabbitMqPublisher
 {
     private readonly IConnection _connection;
     private readonly ILogger<RabbitMqPublisher> _logger;
 
-    public RabbitMqPublisher(IConnection connection, ILogger<RabbitMqPublisher> _logger)
+    public RabbitMqPublisher(IConnection connection, ILogger<RabbitMqPublisher> logger)
     {
         _connection = connection;
+        _logger = logger;
     }
 
     public void PublishLancamento(Lancamento lancamento)
@@ -36,6 +37,4 @@ public class RabbitMqPublisher
 
         _logger.LogInformation($"Mensagem publicada com sucesso!");
     }
-
-
 }

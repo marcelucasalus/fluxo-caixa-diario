@@ -20,5 +20,7 @@
   <Folder Name="/Infrastructure/Web/">
     <Project Path="FluxoCaixaApi/FluxoCaixaApi.csproj" />
   </Folder>
-  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/">
+    <Project Path="TestesUnitarios/TestesUnitarios.csproj" Id="80b9cc56-fe1e-481a-aec3-5a83c63f2465" />
+  </Folder>
 </Solution>

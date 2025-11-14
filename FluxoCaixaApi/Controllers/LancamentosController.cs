@@ -1,6 +1,7 @@
 using Contract.Command;
 using Contract.Query;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FluxoCaixaApi.Controllers
@@ -19,6 +20,7 @@ namespace FluxoCaixaApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Lancamentos([FromBody] LancamentosCommand request)
         {
             var resultado = await _mediator.Send(request);
@@ -26,6 +28,7 @@ namespace FluxoCaixaApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Lancamentos([FromQuery] DateTime? request)
         {
             try

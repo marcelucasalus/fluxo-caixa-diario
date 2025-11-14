@@ -5,25 +5,30 @@ using FluxoCaixa.LancamentoRegistrar.Service;
 using FluxoCaixaApi.Configurations;
 using Integration.Sub;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Query.ConsolidadoDiario;
 using QueryStore;
 using QueryStore.Interface;
 using RabbitMQ.Client;
 using Serilog;
 using StackExchange.Redis;
+using Store;
+using Store.Identity;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -97,15 +102,77 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 🔍 Adiciona o Swagger
+// 🔍 Adiciona o Swagger (CONSOLIDADO)
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Digite: Bearer {seu token JWT}"
+    });
 
-builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions >, ConfigureSwaggerOptions>();
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddTransient<IFluxoCaixaCommandStore, FluxoCaixaCommandStore>();
 builder.Services.AddTransient<ILancamentoRegistrarService, LancamentoRegistrarService>();
 builder.Services.AddTransient<IConsolidadoQueryStore, ConsolidadoQueryStore>();
 builder.Services.AddTransient<ILancamentoQueryStore, LancamentoQueryStore>();
+
+// Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<FluxoCaixaContext>()
+    .AddDefaultTokenProviders();
+
+// JWT Authentication
+var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false; // em prod deixe true
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.FromSeconds(30)
+    };
+});
+
+// Authorization policies
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
+    options.AddPolicy("ConsultaOnly", policy => policy.RequireRole("consulta", "admin"));
+});
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -121,6 +188,12 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
+using (var scopeRole = app.Services.CreateScope())
+{
+    var roleManager = scopeRole.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await RoleInitializer.InitializeAsync(roleManager);
+}
+
 using var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<FluxoCaixaContext>();
 context.Database.Migrate();
@@ -131,6 +204,7 @@ app.UseCors("AllowAll");
 var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
 app.UseSwagger();
+
 app.UseSwaggerUI(options =>
 {
     // Cria uma aba para cada versão detectada
@@ -141,14 +215,9 @@ app.UseSwaggerUI(options =>
     }
 });
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 //app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
