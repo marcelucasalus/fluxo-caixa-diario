@@ -80,8 +80,17 @@ cd fluxocaixa
 
     - docker-compose build
     - docker-compose up -d
-4. Parar execucao:
-
+4. Executar manualmente os scripts de migrations
+    - docker ps no seu terminal
+    - pegar container-id/container-name de alguma replica que esteja rodando
+    - docker exec -it [seu-container-id] /bin/bash ou bin/sh
+    - comandos de verificação: ls/dotnet --version/ dotnet ef --version
+    - Obs: Ficar atento a barra, ex: /src ou \src, isso vai depender do termianl que esá rodando
+    - navegar para cd /src
+    - executar: **dotnet ef database update --project Store --startup-project FluxoCaixaApi** para aplicar as migrações
+5. Acessar aplicação
+    - Acesse **http://localhost:80/swagger/index.html**
+6. Parar execucao:
   - docker-compose down
 
 ## Descrição do fluxo
@@ -139,7 +148,8 @@ cd fluxocaixa
 - Alertas automáticos caso worker ou banco falhem
 
 ### 5️ CI/CD e Automação
-- Pipelines para build, testes e deploy automático (GitHub Actions, GitLab CI/CD ou Azure DevOps)
+- Pipelines para build, testes e deploy automático (GitHub Actions, Azure DevOps)
+- Aplicação das migrations de forma automatica pela pipeline.
 - Deploy automatizado no Kubernetes com **Helm Charts** ou **Kustomize**
 
 ### 6 Indexação

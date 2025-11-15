@@ -19,7 +19,6 @@ using QueryStore.Interface;
 using RabbitMQ.Client;
 using Serilog;
 using StackExchange.Redis;
-using Store;
 using Store.Identity;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
@@ -37,12 +36,7 @@ builder.Services.AddMediatR(cfg =>
 });
 
 
-builder.Services.AddDbContext<FluxoCaixaContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options =>
-{
-    options.MigrationsAssembly("Store");
-    options.EnableRetryOnFailure();
-}));
+builder.Services.AddDbContext<FluxoCaixaContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -217,22 +211,6 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 var app = builder.Build();
-
-
-// Aplicar migrations e inicializar roles
-using (var scope = app.Services.CreateScope())
-{
-    // Aplicar migrations do EF Core
-    var context = scope.ServiceProvider.GetRequiredService<FluxoCaixaContext>();
-    
-    if (context.Database.GetPendingMigrations().Any())
-        context.Database.Migrate();
-
-    // Inicializar roles de Identity
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await RoleInitializer.InitializeAsync(roleManager);
-}
-
 
 
 app.UseCors("AllowAll");

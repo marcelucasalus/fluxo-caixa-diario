@@ -237,6 +237,17 @@ namespace Store.Migrations
                 name: "IX_Lancamentos_DataConsolidacao",
                 table: "Lancamentos",
                 column: "DataConsolidacao");
+
+            migrationBuilder.Sql(@"
+            IF NOT EXISTS (SELECT 1 FROM AspNetRoles WHERE NormalizedName = 'ADMIN')
+                INSERT INTO AspNetRoles (Id, Name, NormalizedName)
+                VALUES (NEWID(), 'admin', 'ADMIN');
+
+            IF NOT EXISTS (SELECT 1 FROM AspNetRoles WHERE NormalizedName = 'CONSULTA')
+                INSERT INTO AspNetRoles (Id, Name, NormalizedName)
+                VALUES (NEWID(), 'consulta', 'CONSULTA');
+            ");
+
         }
 
         /// <inheritdoc />
