@@ -64,16 +64,41 @@ builder.Services.AddSingleton(sp =>
         HostName = config["Host"],
         UserName = config["Username"],
         Password = config["Password"],
-        DispatchConsumersAsync = true // importante para consumers async
+        DispatchConsumersAsync = true
     };
 
-    var connection = factory.CreateConnection();
+    IConnection connection = null;
+    var retryCount = 20;
+    var retryDelay = TimeSpan.FromSeconds(20);
+
+    // Retry de conexão com RabbitMQ
+    for (int attempt = 0; attempt < retryCount; attempt++)
+    {
+        try
+        {
+            connection = factory.CreateConnection();
+            break; // Conexão bem-sucedida, sai do loop
+        }
+        catch (Exception ex)
+        {
+            if (attempt == retryCount - 1)
+            {
+                throw new InvalidOperationException("Não foi possível conectar ao RabbitMQ após várias tentativas.", ex);
+            }
+
+            // Aguarda antes de tentar novamente
+            Console.WriteLine($"Attempt {attempt + 1} falhou, tentando novamente em {retryDelay.TotalSeconds} seconds...");
+            Task.Delay(retryDelay).Wait();
+        }
+    }
 
     // Declarar exchange e fila aqui, na inicialização
-    using var channel = connection.CreateModel();
-    channel.ExchangeDeclare("lancamentos", ExchangeType.Direct, durable: true);
-    channel.QueueDeclare("consolidado_queue", durable: true, exclusive: false, autoDelete: false);
-    channel.QueueBind("consolidado_queue", "lancamentos", "lancamento.registrado");
+    using (var channel = connection.CreateModel())
+    {
+        channel.ExchangeDeclare("lancamentos", ExchangeType.Direct, durable: true);
+        channel.QueueDeclare("consolidado_queue", durable: true, exclusive: false, autoDelete: false);
+        channel.QueueBind("consolidado_queue", "lancamentos", "lancamento.registrado");
+    }
 
     return connection;
 });
@@ -182,7 +207,7 @@ builder.Services.AddAuthorization(options =>
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .WriteTo.Console() // logs no container
-    .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri("http://172.20.0.4:9200"))
+    .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri("http://elasticsearch:9200"))
     {
         AutoRegisterTemplate = true,
         IndexFormat = "fluxocaixa-logs-{0:yyyy.MM.dd}"

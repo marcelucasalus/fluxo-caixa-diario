@@ -9,6 +9,10 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
+# Baixar o script wait-for-it.sh
+RUN curl -o /wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
+    && chmod +x /wait-for-it.sh
+
 # Copia apenas os csproj para cache eficiente
 COPY FluxoCaixaApi/FluxoCaixaApi.csproj FluxoCaixaApi/
 COPY CommandStore/CommandStore.csproj CommandStore/

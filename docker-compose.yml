@@ -15,6 +15,7 @@ services:
       - redis
       - rabbitmq
       - elasticsearch
+    command: ["./wait-for-it.sh", "sqlserver:1433", "--", "./wait-for-it.sh", "rabbitmq:5672", "--", "./wait-for-it.sh", "redis:6379", "--", "./wait-for-it.sh", "elasticsearch:9200", "--", "dotnet", "FluxoCaixaApi.dll"]  
     networks:
       - fluxo-net
 
@@ -36,6 +37,8 @@ services:
       ACCEPT_EULA: "Y"      
     ports:
       - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql  # Volume persistente para dados do SQL Server
     networks:
       - fluxo-net
 
@@ -64,6 +67,9 @@ services:
     networks:
       - fluxo-net
 
+volumes:
+  sql_data:
+    driver: local
 
 networks:
   fluxo-net:

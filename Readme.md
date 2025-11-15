@@ -79,8 +79,10 @@ cd fluxocaixa
 3. Executar os comandos do docker-compose:
 
     - docker-compose build
-    - docker-compose up -d sqlserver redis rabbitmq elasticsearch
-    - docker-compose up -d fluxocaixaapi nginx
+    - docker-compose up -d
+4. Parar execucao:
+
+  - docker-compose down
 
 ## Descrição do fluxo
 

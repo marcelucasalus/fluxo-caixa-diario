@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CommandStore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7cfbcd2486da09383be7f3382c5f862f5976b6ae")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b8c4b8cf5ba735cfd579344244ca77c1c374f56")]
 [assembly: System.Reflection.AssemblyProductAttribute("CommandStore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CommandStore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
