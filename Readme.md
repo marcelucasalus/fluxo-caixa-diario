@@ -100,6 +100,10 @@ cd fluxocaixa
 7. Parar execucao:
   - docker-compose down
 
+8. Relatório de requisições/segundo
+  [📄 Abrir PDF](teste.pdf)
+
+
 ## Descrição do fluxo
 
 ### Get Lancamentos
