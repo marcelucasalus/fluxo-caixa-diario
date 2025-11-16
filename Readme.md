@@ -77,9 +77,9 @@ cd fluxocaixa
 2. Acessar caminho raiz do repositório
 
 3. Executar os comandos do docker-compose:
-
     - docker-compose build
     - docker-compose up -d
+
 4. Executar manualmente os scripts de migrations
     - docker ps no seu terminal
     - pegar container-id/container-name de alguma replica que esteja rodando
@@ -88,9 +88,16 @@ cd fluxocaixa
     - Obs: Ficar atento a barra, ex: /src ou \src, isso vai depender do termianl que esá rodando
     - navegar para cd /src
     - executar: **dotnet ef database update --project Store --startup-project FluxoCaixaApi** para aplicar as migrações
+
 5. Acessar aplicação
     - Acesse **http://localhost:80/swagger/index.html**
-6. Parar execucao:
+
+6. Parâmetros (legenda)
+    - Perfil de acesso: "admin" e "consulta"   
+    - Formato data. ex: 2025-10-29
+    - 0 -> crédito | 1 -> débito   
+    
+7. Parar execucao:
   - docker-compose down
 
 ## Descrição do fluxo
