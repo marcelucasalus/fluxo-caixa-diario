@@ -15,6 +15,11 @@ services:
       - redis
       - rabbitmq
       - elasticsearch
+      - kibana
+      - jaeger
+      - otel-collector
+      - prometheus
+      - grafana
     command: ["./wait-for-it.sh", "sqlserver:1433", "--", "./wait-for-it.sh", "rabbitmq:5672", "--", "./wait-for-it.sh", "redis:6379", "--", "./wait-for-it.sh", "elasticsearch:9200", "--", "dotnet", "FluxoCaixaApi.dll"]  
     networks:
       - fluxo-net
@@ -58,17 +63,82 @@ services:
       - fluxo-net
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
     environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
     ports:
       - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - fluxo-net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - fluxo-net
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: jaeger
+    ports:
+      - "16686:16686"   # UI
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    networks:
+      - fluxo-net
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4318:4318"   # OTLP HTTP receiver
+      - "4317:4317"   # OTLP gRPC receiver
+      - "9464:9464"   # Prometheus scrape endpoint
+    depends_on:
+      - elasticsearch
+    networks:
+      - fluxo-net
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+       - ./prometheus-config/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - otel-collector
+    networks:
+      - fluxo-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
     networks:
       - fluxo-net
 
 volumes:
   sql_data:
+    driver: local
+  elasticsearch-data:
     driver: local
 
 networks:

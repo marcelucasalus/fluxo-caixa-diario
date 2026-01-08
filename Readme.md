@@ -58,6 +58,7 @@ O sistema utiliza arquitetura de microsserviços, mensageria (RabbitMQ), cache (
 - **Segurança:** Identity + JWT  
 - **Orquestração:** Docker + Docker Compose + Nginx  
 - **Testes:** xUnit
+- **Observabilidade** Opentelemetry com jaeger, prometheus + grafana, elasticsearch + kibana
 
 ---
 
@@ -134,36 +135,27 @@ cd fluxocaixa
 - Perfis determinam acesso aos endpoints
 
 ### Logs
-- Toda operação gera logs enviados para Elasticsearch via Serilog
+- Toda operação gera logs enviados para Elasticsearch + kibana via Opentelemetry
 
 ---
 
 ## 🚀 Melhorias Futuras
 
-### 1 Monitoramento e Observabilidade
-- **Prometheus** para coleta de métricas (latência, contagem de requisições, filas pendentes)
-- **Grafana** para dashboards interativos e alertas
-- **Tracing distribuído (OpenTelemetry)** para rastrear o fluxo completo de lançamentos
-
-### 2 Orquestração e Escalabilidade
+### 1 Orquestração e Escalabilidade
 - **Kubernetes** para deploy, escalabilidade e health checks automáticos
 - **Horizontal Pod Autoscaling (HPA)** para ajustar réplicas conforme demanda
 - **ConfigMaps e Secrets** para gerenciar configurações e senhas com segurança
 
-### 3 Resiliência e Mensageria
+### 2 Resiliência e Mensageria
 - **Circuit Breaker / Retry Policies** para falhas no SQL Server ou Redis
 - **Dead Letter Queue no RabbitMQ** para mensagens que falharem várias vezes
 
-### 4 Logging e Centralização
-- Integração futura com **Loki/Grafana** para centralização de logs
-- Alertas automáticos caso worker ou banco falhem
-
-### 5️ CI/CD e Automação
+### 3 CI/CD e Automação
 - Pipelines para build, testes e deploy automático (GitHub Actions, Azure DevOps)
 - Aplicação das migrations de forma automatica pela pipeline.
 - Deploy automatizado no Kubernetes com **Helm Charts** ou **Kustomize**
 
-### 6 Indexação
+### 4 Indexação
 - Melhorar a performace das consultas
 
 

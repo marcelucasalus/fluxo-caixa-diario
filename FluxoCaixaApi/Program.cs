@@ -13,37 +13,110 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Query.ConsolidadoDiario;
 using QueryStore;
 using QueryStore.Interface;
 using RabbitMQ.Client;
-using Serilog;
 using StackExchange.Redis;
 using Store.Identity;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 
+// ========================================
+// CONFIGURAÇÃO CONSOLIDADA DO OPENTELEMETRY
+// ========================================
+var serviceName = "fluxocaixaapi";
+var serviceVersion = "1.0.0";
+
+// Resource Builder compartilhado
+var resourceBuilder = ResourceBuilder.CreateDefault()
+    .AddService(serviceName, serviceVersion: serviceVersion)
+    .AddAttributes(new[]
+    {
+        new KeyValuePair<string, object>("deployment.environment", builder.Environment.EnvironmentName),
+        new KeyValuePair<string, object>("host.name", Environment.MachineName)
+    });
+
+// Configurar Logs
+builder.Logging.ClearProviders();
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options.SetResourceBuilder(resourceBuilder);
+    options.AddOtlpExporter(otlp =>
+    {
+        otlp.Endpoint = new Uri("http://otel-collector:4317");
+        otlp.Protocol = OtlpExportProtocol.Grpc;
+    });
+    options.IncludeScopes = true;
+    options.IncludeFormattedMessage = true;
+});
+
+// Configurar Tracing e Metrics
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(res => res
+        .AddService(serviceName, serviceVersion: serviceVersion)
+        .AddAttributes(new[]
+        {
+            new KeyValuePair<string, object>("deployment.environment", builder.Environment.EnvironmentName),
+            new KeyValuePair<string, object>("host.name", Environment.MachineName)
+        }))
+    .WithTracing(tracer => tracer
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddSource(serviceName)
+        .AddOtlpExporter(otlp =>
+        {
+            otlp.Endpoint = new Uri("http://otel-collector:4317");
+            otlp.Protocol = OtlpExportProtocol.Grpc;
+        }))
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddMeter("FluxoCaixaApi.Metrics")
+        .AddOtlpExporter((otlp, readerOptions) =>
+        {
+            otlp.Endpoint = new Uri("http://otel-collector:4317");
+            otlp.Protocol = OtlpExportProtocol.Grpc;
+            readerOptions.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = 10000;
+        }));
+
+// ========================================
+// MEDIATR
+// ========================================
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(LancamentoRegistrarCommandHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(ConsolidadoQueryHandler).Assembly);
 });
 
+// ========================================
+// DATABASE
+// ========================================
+builder.Services.AddDbContext<FluxoCaixaContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDbContext<FluxoCaixaContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Identity
+// ========================================
+// IDENTITY
+// ========================================
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<FluxoCaixaContext>()
     .AddDefaultTokenProviders();
 
-
+// ========================================
+// REDIS
+// ========================================
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
     var configuration = builder.Configuration;
@@ -53,6 +126,9 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     return ConnectionMultiplexer.Connect(options);
 });
 
+// ========================================
+// RABBITMQ
+// ========================================
 builder.Services.AddSingleton(sp =>
 {
     var config = builder.Configuration.GetSection("RabbitMQ");
@@ -68,13 +144,12 @@ builder.Services.AddSingleton(sp =>
     var retryCount = 20;
     var retryDelay = TimeSpan.FromSeconds(20);
 
-    // Retry de conexão com RabbitMQ
     for (int attempt = 0; attempt < retryCount; attempt++)
     {
         try
         {
             connection = factory.CreateConnection();
-            break; // Conexão bem-sucedida, sai do loop
+            break;
         }
         catch (Exception ex)
         {
@@ -82,14 +157,11 @@ builder.Services.AddSingleton(sp =>
             {
                 throw new InvalidOperationException("Não foi possível conectar ao RabbitMQ após várias tentativas.", ex);
             }
-
-            // Aguarda antes de tentar novamente
             Console.WriteLine($"Attempt {attempt + 1} falhou, tentando novamente em {retryDelay.TotalSeconds} seconds...");
             Task.Delay(retryDelay).Wait();
         }
     }
 
-    // Declarar exchange e fila aqui, na inicialização
     using (var channel = connection.CreateModel())
     {
         channel.ExchangeDeclare("lancamentos", ExchangeType.Direct, durable: true);
@@ -100,11 +172,12 @@ builder.Services.AddSingleton(sp =>
     return connection;
 });
 
-builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>(); // Publisher que só publica mensagens
-builder.Services.AddHostedService<ConsolidadoWorker>(); // Worker que consome mensagens
+builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
+builder.Services.AddHostedService<ConsolidadoWorker>();
 
-
-// ✅ Registrar o versionamento de API
+// ========================================
+// API VERSIONING
+// ========================================
 builder.Services.AddApiVersioning(options =>
 {
     options.AssumeDefaultVersionWhenUnspecified = true;
@@ -118,6 +191,9 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+// ========================================
+// CORS
+// ========================================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -128,7 +204,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 🔍 Adiciona o Swagger (CONSOLIDADO)
+// ========================================
+// SWAGGER
+// ========================================
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -158,16 +236,21 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// ========================================
+// DEPENDENCY INJECTION
+// ========================================
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddTransient<IFluxoCaixaCommandStore, FluxoCaixaCommandStore>();
+builder.Services.AddSingleton(new Meter("FluxoCaixaApi.Metrics", "1.0.0"));
+builder.Services.AddSingleton(new ActivitySource("FluxoCaixaApi"));
 builder.Services.AddTransient<ILancamentoRegistrarService, LancamentoRegistrarService>();
 builder.Services.AddTransient<IConsolidadoQueryStore, ConsolidadoQueryStore>();
 builder.Services.AddTransient<ILancamentoQueryStore, LancamentoQueryStore>();
 
-
-
-// JWT Authentication
+// ========================================
+// JWT AUTHENTICATION
+// ========================================
 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
 builder.Services.AddAuthentication(options =>
 {
@@ -177,7 +260,7 @@ builder.Services.AddAuthentication(options =>
 .AddJwtBearer(options =>
 {
     options.SaveToken = true;
-    options.RequireHttpsMetadata = false; // em prod deixe true
+    options.RequireHttpsMetadata = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -191,38 +274,30 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Authorization policies
+// ========================================
+// AUTHORIZATION
+// ========================================
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
     options.AddPolicy("ConsultaOnly", policy => policy.RequireRole("consulta", "admin"));
 });
 
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.Console() // logs no container
-    .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions(new Uri("http://elasticsearch:9200"))
-    {
-        AutoRegisterTemplate = true,
-        IndexFormat = "fluxocaixa-logs-{0:yyyy.MM.dd}"
-    })
-    .CreateLogger();
-
-builder.Host.UseSerilog();
-
+// ========================================
+// BUILD APP
+// ========================================
 var app = builder.Build();
-
 
 app.UseCors("AllowAll");
 
-// Habilita o Swagger na aplicação
+// ========================================
+// SWAGGER UI
+// ========================================
 var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
 app.UseSwagger();
-
 app.UseSwaggerUI(options =>
 {
-    // Cria uma aba para cada versão detectada
     foreach (var description in provider.ApiVersionDescriptions)
     {
         options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
@@ -230,12 +305,8 @@ app.UseSwaggerUI(options =>
     }
 });
 
-//app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
-

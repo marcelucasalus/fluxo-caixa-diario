@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 15s        # frequência que o Prometheus coleta métricas
+  evaluation_interval: 30s
+
+scrape_configs:
+  - job_name: 'api'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['otel-collector:9464']   # endpoint do Collector
