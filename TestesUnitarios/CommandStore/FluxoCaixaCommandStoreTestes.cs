@@ -11,6 +11,8 @@ using Moq.Protected;
 using StackExchange.Redis;
 using Xunit;
 using CommandStore.FluxoCaixa;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace TestesUnitarios.CommandStore
 {
@@ -23,6 +25,9 @@ namespace TestesUnitarios.CommandStore
         private readonly Mock<HttpMessageHandler> _mockHttpMessageHandler;
         private readonly HttpClient _httpClient;
         private readonly FluxoCaixaCommandStore _commandStore;
+        private readonly Meter _meter;
+        private readonly ActivitySource _activitySource;
+        private static readonly Random _randomId = new();
 
         public FluxoCaixaCommandStoreTestes()
         {
@@ -37,13 +42,17 @@ namespace TestesUnitarios.CommandStore
             _mockLogger = new Mock<ILogger<FluxoCaixaCommandStore>>();
             _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
             _httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+            _meter = new Meter("FluxoCaixa.Tests");
+            _activitySource = new ActivitySource("FluxoCaixa.Tests");
 
             _commandStore = new FluxoCaixaCommandStore(
                 _context,
                 _mockRedis.Object,
                 _mockRabbitPublisher.Object,
                 _mockLogger.Object,
-                _httpClient);
+                _httpClient,
+                _activitySource,
+                _meter);
         }
 
         #region RegistrarLancamentos - Consolidado não existe
@@ -343,7 +352,7 @@ namespace TestesUnitarios.CommandStore
         {
             return new Lancamento
             {
-                IdLancamento = new Random().Next(1, 10000),
+                IdLancamento = _randomId.Next(1, 10000),
                 Tipo = tipo,
                 Valor = valor,
                 DataLancamento = dataLancamento ?? DateTime.Now,
