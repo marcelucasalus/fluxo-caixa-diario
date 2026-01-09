@@ -10,14 +10,11 @@ Aplicação backend em .NET para controle de fluxo de caixa diário, com serviç
   - **Admin:** Pode realizar todos os endpoints.
   - **Consulta:** Apenas pode consultar lançamentos e consolidado.
 
-O sistema utiliza arquitetura de microsserviços, mensageria (RabbitMQ), cache (Redis), logs centralizados (Elastic), segurança via Identity e JWT, e escalabilidade com Docker + Nginx e banco SQL Server.
+O sistema utiliza arquitetura de microsserviços, mensageria (RabbitMQ), cache (Redis), observabilidade: opentelemetry, metricas(prometheus + grafana), logs (Elasticsearch + kibana) e traces(jaeger), segurança via Identity e JWT e escalabilidade com Docker + Nginx e banco SQL Server.
 
 ---
 
 ## **Arquitetura da Solução**
-
-### Diagrama de arquitetura
-![Diagrama de Arquitetura](diagrama.png)
 
 **Fluxo principal:**
 1. Usuário realiza um lançamento via `POST /lancamentos`.
