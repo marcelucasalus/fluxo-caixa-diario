@@ -10,7 +10,7 @@
     <PackageReference Include="Elastic.Serilog.Sinks" Version="9.0.0" />
     <PackageReference Include="MediatR" Version="13.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
     <PackageReference Include="OpenTelemetry" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />
