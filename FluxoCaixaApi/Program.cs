@@ -3,6 +3,8 @@ using CommandStore.FluxoCaixa;
 using FluxoCaixa.LancamentoRegistrar.Interface;
 using FluxoCaixa.LancamentoRegistrar.Service;
 using FluxoCaixaApi.Configurations;
+using FluxoCaixaApi.Services;
+using FluxoCaixaApi.Services.Interface;
 using Integration.Sub;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -247,6 +249,7 @@ builder.Services.AddSingleton(new ActivitySource("FluxoCaixaApi"));
 builder.Services.AddTransient<ILancamentoRegistrarService, LancamentoRegistrarService>();
 builder.Services.AddTransient<IConsolidadoQueryStore, ConsolidadoQueryStore>();
 builder.Services.AddTransient<ILancamentoQueryStore, LancamentoQueryStore>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 
 // ========================================
 // JWT AUTHENTICATION

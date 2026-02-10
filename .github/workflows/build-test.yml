@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout código
+    - name: Checkout cï¿½digo
       uses: actions/checkout@v4
 
     - name: Setup .NET 10
@@ -31,13 +31,13 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget-
 
-    - name: Restaurar dependências
+    - name: Restaurar dependï¿½ncias
       run: dotnet restore
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Executar testes unitários
+    - name: Executar testes unitï¿½rios
       run: dotnet test TestesUnitarios/TestesUnitarios.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
 
     - name: Publicar resultados dos testes
@@ -47,7 +47,7 @@ jobs:
         name: test-results
         path: '**/test-results.trx'
 
-    - name: Relatório de testes
+    - name: Relatï¿½rio de testes
       if: always()
       uses: dorny/test-reporter@v1
       with:
@@ -56,12 +56,12 @@ jobs:
         reporter: 'dotnet trx'
 
     - name: SonarQube Scan (opcional)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.SONAR_TOKEN != ''
       uses: SonarSource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: |
-          -Dsonar.projectKey=seu-projeto-key
-          -Dsonar.organization=sua-org
+          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
