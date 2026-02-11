@@ -57,6 +57,7 @@ jobs:
 
     - name: SonarQube Scan (opcional)
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      continue-on-error: true
       uses: SonarSource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
