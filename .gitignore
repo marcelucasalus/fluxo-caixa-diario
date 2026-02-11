@@ -2,3 +2,8 @@
 obj/
 bin/
 .idea/
+
+# Act (GitHub Actions local testing)
+.secrets
+.github/.secrets
+.github/.env

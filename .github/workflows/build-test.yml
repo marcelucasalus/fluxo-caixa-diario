@@ -9,36 +9,39 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout c�digo
+    - name: Checkout código
       uses: actions/checkout@v4
 
-    - name: Setup .NET 10
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
+        dotnet-quality: 'preview'
 
     - name: Cache NuGet packages
       uses: actions/cache@v4
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
 
-    - name: Restaurar depend�ncias
+    - name: Restaurar dependências
       run: dotnet restore
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Executar testes unit�rios
-      run: dotnet test TestesUnitarios/TestesUnitarios.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+    - name: Executar testes unitários
+      run: dotnet test TestesUnitarios/TestesUnitarios.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
 
     - name: Publicar resultados dos testes
       if: always()
@@ -46,17 +49,20 @@ jobs:
       with:
         name: test-results
         path: '**/test-results.trx'
+        retention-days: 30
 
-    - name: Relat�rio de testes
+    - name: Relatório de testes
       if: always()
       uses: dorny/test-reporter@v1
       with:
         name: Resultados dos Testes
         path: '**/test-results.trx'
-        reporter: 'dotnet trx'
+        reporter: dotnet-trx
+        fail-on-error: false
 
-    - name: SonarQube Scan (opcional)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.SONAR_TOKEN != ''
+    - name: SonarQube Scan
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      continue-on-error: true
       uses: SonarSource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
