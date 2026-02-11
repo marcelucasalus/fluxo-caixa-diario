@@ -147,8 +147,7 @@ cd fluxocaixa
 - **Circuit Breaker / Retry Policies** para falhas no SQL Server ou Redis
 - **Dead Letter Queue no RabbitMQ** para mensagens que falharem várias vezes
 
-### 3 CI/CD e Automação
-- Pipelines para build, testes e deploy automático (GitHub Actions, Azure DevOps)
+### 3 Automação
 - Aplicação das migrations de forma automatica pela pipeline.
 - Deploy automatizado no Kubernetes com **Helm Charts** ou **Kustomize**
 
