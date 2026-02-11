@@ -56,7 +56,9 @@ jobs:
         reporter: 'dotnet trx'
 
     - name: SonarQube Scan (opcional)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.SONAR_TOKEN != ''
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      # Permite que o workflow continue mesmo se o SONAR_TOKEN não estiver configurado
+      continue-on-error: true
       uses: SonarSource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
